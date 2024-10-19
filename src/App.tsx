@@ -33,16 +33,19 @@ function App() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messages: newMessages,
-          model: "hermes3-405b",
-        }),
-      });
+      const response = await fetch(
+        "https://chatbotbe-7db4db575f60.herokuapp.com/chat",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messages: newMessages,
+            model: "hermes3-405b",
+          }),
+        }
+      );
 
       const data = await response.json();
       const assistantMessage = data.choices[0].message.content;
