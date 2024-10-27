@@ -28,6 +28,15 @@ body {
   font-size: 1.5rem;
 }
 
+.sidebar select {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background-color: #34495e;
+  color: #ecf0f1;
+  border: 1px solid #34495e;
+  border-radius: 0.25rem;
+}
+
 .sidebar textarea {
   flex-grow: 1;
   resize: none;
@@ -37,6 +46,15 @@ body {
   font-size: 0.9rem;
   background-color: #34495e;
   color: #ecf0f1;
+  margin-bottom: 1rem;
+}
+
+.character-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto;
 }
 
 .chat-container {
@@ -51,11 +69,28 @@ body {
   color: white;
   padding: 1rem;
   text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .chat-header h1 {
   margin: 0;
   font-size: 1.5rem;
+}
+
+.chat-header button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.chat-header button:hover {
+  background-color: #c0392b;
 }
 
 .chat-messages {
@@ -91,29 +126,45 @@ body {
 
 .chat-input {
   display: flex;
-  padding: 1rem;
+  padding: 0.75rem;
   background-color: #fff;
   border-top: 1px solid #bdc3c7;
+  align-items: center;
 }
 
-.chat-input input {
+.chat-input textarea {
   flex-grow: 1;
-  padding: 0.75rem;
   border: 1px solid #bdc3c7;
-  border-radius: 2rem;
+  border-radius: 1.5rem;
   font-size: 1rem;
   margin-right: 0.5rem;
+  resize: none;
+  min-height: 40px;
+  max-height: 120px;
+  line-height: 20px;
+  padding: 10px 15px;
+  box-sizing: border-box;
+  height: 45px;
+}
+
+.chat-input textarea::placeholder {
+  line-height: 20px;
+  vertical-align: middle;
 }
 
 .chat-input button {
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1rem;
   background-color: #3498db;
   color: white;
   border: none;
-  border-radius: 2rem;
+  border-radius: 1.5rem;
   cursor: pointer;
   transition: background-color 0.2s;
   font-size: 1rem;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chat-input button:hover {

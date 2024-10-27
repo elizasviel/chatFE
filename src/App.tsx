@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, ChangeEvent } from "react";
 import "./App.css";
 
 interface Message {
@@ -6,8 +6,67 @@ interface Message {
   content: string;
 }
 
+interface Character {
+  name: string;
+  description: string;
+  avatar: string;
+}
+
 function App() {
-  const [systemPrompt, setSystemPrompt] = useState("");
+  const [characters, setCharacters] = useState<Character[]>([
+    {
+      name: "Vicky",
+      description:
+        "Vicky is a redhead with freckles. She works in a bar, but dreams of owning it one day. She is chivalrous when it comes to protecting males, and holds a very traditional view of relationships. She has a drinking problem and values consent, but is capable of forcing the issue if she feels a male is running her around. Her penis is average for a futa.",
+      avatar: "/avatars/vicky-avatar.png",
+    },
+    {
+      name: "Suni",
+      description:
+        "Suni is a slender, athletic futa with short dark hair. She is very kind and sweet, and a big supporter of male rights. She is a gold-medal figure skater, into indie music and trivia/riddles. She has a female girlfriend named Sara. Her penis is small for a futa.",
+      avatar: "/avatars/suni-avatar.png",
+    },
+    {
+      name: "Shauna",
+      description:
+        "Shauna is a yandere character who becomes obsessed with the player. She views her male as a pet and will use extreme measures to train him. She has a history of violence. Her penis is average for a futa.",
+      avatar: "/avatars/shauna-avatar.png",
+    },
+    {
+      name: "Rye",
+      description:
+        "Rye is a wealthy noble's daughter who enjoys partying and casual encounters. She's sarcastic and snarky, but secretly prefers males with self-respect. Her penis is above average for a futa and thicker than most.",
+      avatar: "/avatars/rye-avatar.png",
+    },
+    {
+      name: "Claudia",
+      description:
+        "Claudia is a captain in the MREA (police equivalent). She believes in rewarding compliance and punishing resistance. She's skilled in various sexual techniques and is secretly in a relationship with Demetria. Her penis is above average for a futa.",
+      avatar: "/avatars/claudia-avatar.png",
+    },
+    {
+      name: "Demetria",
+      description:
+        "Demetria is the head of the Imperial Temple. She teaches male obedience and incorporates BDSM in spiritual relationships. She's in a secret relationship with Claudia and can be cold at first. Her penis is above average for a futa.",
+      avatar: "/avatars/demetria-avatar.png",
+    },
+    {
+      name: "Mallory",
+      description:
+        "Mallory is a devout temple acolyte who believes strongly in using pain to correct male behavior. She's sexually dominant but caring, and has ambitions for temple reform. Her penis is slightly above average for a futa.",
+      avatar: "/avatars/mallory-avatar.png",
+    },
+    {
+      name: "Sally",
+      description:
+        "Sally is the strongest futa alive, but somewhat dimwitted. She enjoys building dollhouses and wants to care for and dress up her male. She can accidentally hurt males due to her strength. Her penis is the largest of all characters.",
+      avatar: "/avatars/sally-avatar.png",
+    },
+  ]);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character>(
+    characters[0]
+  );
+  const [systemPrompt, setSystemPrompt] = useState(characters[0].description);
   const [messages, setMessages] = useState<Message[]>([
     { role: "system", content: systemPrompt },
   ]);
@@ -18,6 +77,37 @@ function App() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    const savedMessages = localStorage.getItem("chatHistory");
+    if (savedMessages) {
+      setMessages(JSON.parse(savedMessages));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("chatHistory", JSON.stringify(messages));
+  }, [messages]);
+
+  const handleAvatarUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const newCharacters = characters.map((char) =>
+          char.name === selectedCharacter.name
+            ? { ...char, avatar: reader.result as string }
+            : char
+        );
+        setCharacters(newCharacters);
+        setSelectedCharacter({
+          ...selectedCharacter,
+          avatar: reader.result as string,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSend = async () => {
     if (input.trim() === "") return;
@@ -70,19 +160,54 @@ function App() {
     ]);
   };
 
+  const handleCharacterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newCharacter = characters.find(
+      (char) => char.name === e.target.value
+    );
+    if (newCharacter) {
+      setSelectedCharacter(newCharacter);
+      setSystemPrompt(newCharacter.description);
+      setMessages([
+        { role: "system", content: newCharacter.description },
+        ...messages.slice(1),
+      ]);
+    }
+  };
+
+  const clearChat = () => {
+    setMessages([{ role: "system", content: systemPrompt }]);
+  };
+
   return (
     <div className="app-container">
       <div className="sidebar">
+        <h2>Character Selection</h2>
+        <select value={selectedCharacter.name} onChange={handleCharacterChange}>
+          {characters.map((char) => (
+            <option key={char.name} value={char.name}>
+              {char.name}
+            </option>
+          ))}
+        </select>
         <h2>Character Description</h2>
         <textarea
           value={systemPrompt}
           onChange={handleSystemPromptChange}
           placeholder="Enter character description here..."
         />
+        <h2>Character Avatar</h2>
+        <img src={selectedCharacter.avatar} className="character-avatar" />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleAvatarUpload}
+          className="avatar-upload"
+        />
       </div>
       <div className="chat-container">
         <header className="chat-header">
           <h1>Futadomworld Character Chatbot</h1>
+          <button onClick={clearChat}>Clear Chat</button>
         </header>
         <div className="chat-messages">
           {messages.slice(1).map((message, index) => (
@@ -104,12 +229,16 @@ function App() {
           <div ref={messagesEndRef} />
         </div>
         <div className="chat-input">
-          <input
-            type="text"
+          <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleSend()}
-            placeholder="Type your message here..."
+            onKeyPress={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+            placeholder="Type your message here... (Shift + Enter for new line)"
           />
           <button onClick={handleSend} disabled={isLoading}>
             Send
