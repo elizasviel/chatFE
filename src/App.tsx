@@ -12,7 +12,16 @@ interface Character {
   avatar: string;
 }
 
+interface Chunk {
+  id: string;
+  content: string;
+}
+
 function App() {
+  const [ragMode, setRagMode] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [chunks, setChunks] = useState<Chunk[]>([]);
+  const [retrievedChunks, setRetrievedChunks] = useState<Chunk[]>([]);
   const [characters, setCharacters] = useState<Character[]>([
     {
       name: "Vicky",
@@ -115,6 +124,34 @@ function App() {
     }
   };
 
+  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadedFile(file);
+    }
+  };
+
+  const handleChunkAndAddToKnowledgeBase = async () => {
+    if (!uploadedFile) return;
+
+    // Here you would implement the logic to chunk the document and add it to the knowledge base
+    // For this example, we'll just simulate it with a timeout
+    setIsLoading(true);
+    setTimeout(() => {
+      const simulatedChunks: Chunk[] = [
+        { id: "1", content: "Simulated chunk 1 from " + uploadedFile.name },
+        { id: "2", content: "Simulated chunk 2 from " + uploadedFile.name },
+      ];
+      setChunks((prevChunks) => [...prevChunks, ...simulatedChunks]);
+      setIsLoading(false);
+      setUploadedFile(null);
+    }, 2000);
+  };
+
+  const toggleRagMode = () => {
+    setRagMode(!ragMode);
+  };
+
   const handleSend = async () => {
     if (input.trim() === "") return;
 
@@ -124,6 +161,17 @@ function App() {
     setIsLoading(true);
 
     try {
+      // If RAG mode is on, we'll retrieve relevant chunks here
+      if (ragMode) {
+        // Simulating chunk retrieval
+        const relevantChunks = chunks.slice(0, 2);
+        setRetrievedChunks(relevantChunks);
+      } else {
+        // Clear retrieved chunks if RAG mode is off
+        setRetrievedChunks([]);
+      }
+
+      // Rest of the existing handleSend logic...
       const response = await fetch(
         "https://chatbotbe-7db4db575f60.herokuapp.com/chat",
         {
@@ -201,16 +249,27 @@ function App() {
           onChange={handleSystemPromptChange}
           placeholder="Enter character description here..."
         />
-        <h2>Character Avatar</h2>
-        <div className="character-avatar">
-          <img src={selectedCharacter.avatar} onError={handleImageError} />
-        </div>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleAvatarUpload}
-          className="avatar-upload"
-        />
+        <h2>RAG Mode</h2>
+        <input type="file" onChange={handleFileUpload} />
+        <button
+          onClick={handleChunkAndAddToKnowledgeBase}
+          disabled={!uploadedFile}
+        >
+          Chunk and Add to Knowledge Base
+        </button>
+        <button onClick={toggleRagMode}>
+          {ragMode ? "Disable RAG Mode" : "Enable RAG Mode"}
+        </button>
+        {ragMode && (
+          <div className="retrieved-chunks">
+            <h3>Retrieved Chunks</h3>
+            {retrievedChunks.map((chunk) => (
+              <div key={chunk.id} className="chunk">
+                {chunk.content}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       <div className="chat-container">
         <header className="chat-header">
