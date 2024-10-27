@@ -74,6 +74,37 @@ body {
   cursor: not-allowed;
 }
 
+.sidebar .file-upload-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.sidebar .file-upload-row input[type="file"] {
+  flex-grow: 1;
+  margin-bottom: 0.25rem;
+  margin-right: -1rem;
+}
+
+.sidebar .file-upload-row button {
+  width: auto;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.retrieved-chunks {
+  margin-top: 1rem;
+  background-color: #34495e;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.retrieved-chunks.disabled {
+  opacity: 0.5;
+}
+
 .retrieved-chunks {
   margin-top: 1rem;
   background-color: #34495e;

@@ -224,26 +224,29 @@ function App() {
           placeholder="Enter character description here..."
         />
         <h2>RAG Mode</h2>
-        <input type="file" onChange={handleFileUpload} />
+        <div className="file-upload-row">
+          <input type="file" onChange={handleFileUpload} />
+          <button onClick={toggleRagMode}>
+            {ragMode ? "Disable" : "Enable"}
+          </button>
+        </div>
         <button
           onClick={handleChunkAndAddToKnowledgeBase}
           disabled={!uploadedFile}
         >
           Chunk and Add to Knowledge Base
         </button>
-        <button onClick={toggleRagMode}>
-          {ragMode ? "Disable RAG Mode" : "Enable RAG Mode"}
-        </button>
-        {ragMode && (
-          <div className="retrieved-chunks">
-            <h3>Retrieved Chunks</h3>
-            {retrievedChunks.map((chunk) => (
-              <div key={chunk.id} className="chunk">
-                {chunk.content}
-              </div>
-            ))}
-          </div>
-        )}
+        <div className={`retrieved-chunks ${!ragMode ? "disabled" : ""}`}>
+          <h3>Retrieved Chunks</h3>
+          {retrievedChunks.map((chunk) => (
+            <div key={chunk.id} className="chunk">
+              {chunk.content}
+            </div>
+          ))}
+          {retrievedChunks.length === 0 && (
+            <div className="chunk">No chunks retrieved</div>
+          )}
+        </div>
       </div>
       <div className="chat-container">
         <header className="chat-header">
