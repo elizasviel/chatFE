@@ -46,6 +46,29 @@ function App() {
     }
   };
 
+  const handleClearKnowledgeBase = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        "https://chatbotbe-7db4db575f60.herokuapp.com/clear",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      console.log("Knowledge base cleared");
+    } catch (error) {
+      console.error("Error clearing knowledge base:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleAddToKnowledgeBase = async () => {
     if (!uploadedFile) return;
     setIsLoading(true);
@@ -204,12 +227,17 @@ function App() {
               {ragMode ? "Disable RAG" : "Enable RAG"}
             </button>
           </div>
-          <button
-            onClick={handleAddToKnowledgeBase}
-            disabled={!ragMode || !uploadedFile}
-          >
-            Add to Knowledge Base
-          </button>
+          <div className="knowledge-base-controls">
+            <button
+              onClick={handleAddToKnowledgeBase}
+              disabled={!ragMode || !uploadedFile}
+            >
+              Add Document
+            </button>
+            <button onClick={handleClearKnowledgeBase} disabled={!ragMode}>
+              Clear Documents
+            </button>
+          </div>
           <div className="retrieved-chunks">
             <h3>Retrieved Chunks</h3>
             {retrievedChunks.map((chunk) => (
