@@ -89,6 +89,12 @@ function App() {
     localStorage.setItem("chatHistory", JSON.stringify(messages));
   }, [messages]);
 
+  const handleImageError = (
+    e: React.SyntheticEvent<HTMLImageElement, Event>
+  ) => {
+    e.currentTarget.src = "/default-avatar.png"; // Set a default avatar image
+  };
+
   const handleAvatarUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -196,7 +202,9 @@ function App() {
           placeholder="Enter character description here..."
         />
         <h2>Character Avatar</h2>
-        <img src={selectedCharacter.avatar} className="character-avatar" />
+        <div className="character-avatar">
+          <img src={selectedCharacter.avatar} onError={handleImageError} />
+        </div>
         <input
           type="file"
           accept="image/*"
