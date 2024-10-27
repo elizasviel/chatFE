@@ -22,7 +22,7 @@ function App() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [chunks, setChunks] = useState<Chunk[]>([]);
   const [retrievedChunks, setRetrievedChunks] = useState<Chunk[]>([]);
-  const [characters, setCharacters] = useState<Character[]>([
+  const [characters] = useState<Character[]>([
     {
       name: "Vicky",
       description:
