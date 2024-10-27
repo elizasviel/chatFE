@@ -105,21 +105,18 @@ function App() {
     }
   };
 
-  const handleChunkAndAddToKnowledgeBase = async () => {
+  const handleAddToKnowledgeBase = async () => {
     if (!uploadedFile) return;
-
-    // Here you would implement the logic to chunk the document and add it to the knowledge base
-    // For this example, we'll just simulate it with a timeout
     setIsLoading(true);
-    setTimeout(() => {
-      const simulatedChunks: Chunk[] = [
-        { id: "1", content: "Simulated chunk 1 from " + uploadedFile.name },
-        { id: "2", content: "Simulated chunk 2 from " + uploadedFile.name },
-      ];
-      setChunks((prevChunks) => [...prevChunks, ...simulatedChunks]);
-      setIsLoading(false);
-      setUploadedFile(null);
-    }, 2000);
+    await fetch("https://chatbotbe-7db4db575f60.herokuapp.com/chunk", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        document: uploadedFile,
+      }),
+    });
+    setIsLoading(false);
+    setUploadedFile(null);
   };
 
   const toggleRagMode = () => {
@@ -135,34 +132,47 @@ function App() {
     setIsLoading(true);
 
     try {
-      // If RAG mode is on, we'll retrieve relevant chunks here
+      // If RAG mode is on, we'll hit the /ragchat endpoint
       if (ragMode) {
-        // Simulating chunk retrieval
+        const response = await fetch(
+          "https://chatbotbe-7db4db575f60.herokuapp.com/ragchat",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              messages: newMessages,
+              model: "hermes3-405b-fp8-128k",
+            }),
+          }
+        );
+
+        const data = await response.json();
+        setMessages([
+          ...newMessages,
+          { role: "assistant", content: data.choices[0].message.content },
+        ] as Message[]);
         const relevantChunks = chunks.slice(0, 2);
         setRetrievedChunks(relevantChunks);
       } else {
-        // Clear retrieved chunks if RAG mode is off
+        const response = await fetch(
+          "https://chatbotbe-7db4db575f60.herokuapp.com/chat",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              messages: newMessages,
+              model: "hermes3-405b-fp8-128k",
+            }),
+          }
+        );
+
+        const data = await response.json();
+        setMessages([
+          ...newMessages,
+          { role: "assistant", content: data.choices[0].message.content },
+        ] as Message[]);
         setRetrievedChunks([]);
       }
-
-      // Rest of the existing handleSend logic...
-      const response = await fetch(
-        "https://chatbotbe-7db4db575f60.herokuapp.com/chat",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            messages: newMessages,
-            model: "hermes3-405b-fp8-128k",
-          }),
-        }
-      );
-
-      const data = await response.json();
-      setMessages([
-        ...newMessages,
-        { role: "assistant", content: data.choices[0].message.content },
-      ] as Message[]);
     } catch (error) {
       console.error("Error:", error);
       setMessages([
@@ -224,28 +234,37 @@ function App() {
           placeholder="Enter character description here..."
         />
         <h2>RAG Mode</h2>
-        <div className="file-upload-row">
-          <input type="file" onChange={handleFileUpload} />
-          <button onClick={toggleRagMode}>
-            {ragMode ? "Disable" : "Enable"}
+        <div className={`rag-mode-panel ${ragMode ? "enabled" : ""}`}>
+          <div className="file-upload-row">
+            <input
+              type="file"
+              onChange={handleFileUpload}
+              disabled={!ragMode}
+            />
+            <button
+              className={`toggle-rag-button ${ragMode ? "enabled" : ""}`}
+              onClick={toggleRagMode}
+            >
+              {ragMode ? "Disable RAG" : "Enable RAG"}
+            </button>
+          </div>
+          <button
+            onClick={handleAddToKnowledgeBase}
+            disabled={!ragMode || !uploadedFile}
+          >
+            Add to Knowledge Base
           </button>
-        </div>
-        <button
-          onClick={handleChunkAndAddToKnowledgeBase}
-          disabled={!uploadedFile}
-        >
-          Chunk and Add to Knowledge Base
-        </button>
-        <div className={`retrieved-chunks ${!ragMode ? "disabled" : ""}`}>
-          <h3>Retrieved Chunks</h3>
-          {retrievedChunks.map((chunk) => (
-            <div key={chunk.id} className="chunk">
-              {chunk.content}
-            </div>
-          ))}
-          {retrievedChunks.length === 0 && (
-            <div className="chunk">No chunks retrieved</div>
-          )}
+          <div className="retrieved-chunks">
+            <h3>Retrieved Chunks</h3>
+            {retrievedChunks.map((chunk) => (
+              <div key={chunk.id} className="chunk">
+                {chunk.content}
+              </div>
+            ))}
+            {retrievedChunks.length === 0 && (
+              <div className="chunk">No chunks retrieved</div>
+            )}
+          </div>
         </div>
       </div>
       <div className="chat-container">

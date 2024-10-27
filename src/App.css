@@ -98,7 +98,7 @@ body {
   padding: 0.5rem;
   border-radius: 0.25rem;
   opacity: 1;
-  transition: opacity 0.3s ease;
+  transition: background-color 0.2s ease;
 }
 
 .retrieved-chunks.disabled {
@@ -286,6 +286,50 @@ body {
 
 .typing-indicator span:nth-child(3) {
   animation-delay: 0.4s;
+}
+
+.rag-mode-panel {
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.rag-mode-panel.enabled {
+  opacity: 1;
+}
+
+.rag-mode-panel input[type="file"],
+.rag-mode-panel button:not(.toggle-rag-button) {
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.rag-mode-panel.enabled input[type="file"],
+.rag-mode-panel.enabled button {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.toggle-rag-button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  pointer-events: auto !important;
+}
+
+.toggle-rag-button.enabled {
+  background-color: #e74c3c;
+}
+
+.toggle-rag-button:hover {
+  background-color: #2980b9;
+}
+
+.toggle-rag-button.enabled:hover {
+  background-color: #c0392b;
 }
 
 @keyframes typing {
