@@ -332,6 +332,24 @@ body {
   background-color: #c0392b;
 }
 
+.chat-controls {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chat-controls button {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.chat-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @keyframes typing {
   0% {
     opacity: 0.4;
