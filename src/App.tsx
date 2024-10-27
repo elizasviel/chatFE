@@ -98,32 +98,6 @@ function App() {
     localStorage.setItem("chatHistory", JSON.stringify(messages));
   }, [messages]);
 
-  const handleImageError = (
-    e: React.SyntheticEvent<HTMLImageElement, Event>
-  ) => {
-    e.currentTarget.src = "/default-avatar.png"; // Set a default avatar image
-  };
-
-  const handleAvatarUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const newCharacters = characters.map((char) =>
-          char.name === selectedCharacter.name
-            ? { ...char, avatar: reader.result as string }
-            : char
-        );
-        setCharacters(newCharacters);
-        setSelectedCharacter({
-          ...selectedCharacter,
-          avatar: reader.result as string,
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
