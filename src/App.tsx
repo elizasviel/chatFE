@@ -20,7 +20,7 @@ interface Chunk {
 function App() {
   const [ragMode, setRagMode] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [chunks, setChunks] = useState<Chunk[]>([]);
+  const [chunks] = useState<Chunk[]>([]);
   const [retrievedChunks, setRetrievedChunks] = useState<Chunk[]>([]);
   const [characters] = useState<Character[]>([
     {
