@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import "./App.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -95,9 +97,27 @@ function App() {
         }
 
         const data = await response.json();
-        console.log("Chunking result:", data);
+        // Create notification message with first 5 chunks
+        const chunkPreview = data
+          .slice(0, 5)
+          .map((chunk: any) => chunk.text.substring(0, 50) + "...")
+          .join("\n\n");
+        const message = `Successfully chunked document:\n\n${chunkPreview}${
+          data.length > 5 ? "\n\n..." : ""
+        }`;
+        toast.success(message, {
+          position: "top-right",
+          autoClose: 5000,
+          closeOnClick: true,
+          pauseOnHover: true,
+          style: { whiteSpace: "pre-line" },
+        });
       } catch (error) {
         console.error("Error chunking document:", error);
+        toast.error("Failed to chunk document. Please try again.", {
+          position: "top-right",
+          autoClose: 5000,
+        });
       } finally {
         setIsLoading(false);
         setUploadedFile(null);
@@ -195,6 +215,7 @@ function App() {
 
   return (
     <div className="app-container">
+      <ToastContainer />
       <div className="sidebar">
         <h2>Character Description</h2>
         <textarea
