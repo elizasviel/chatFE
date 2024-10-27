@@ -6,11 +6,10 @@ interface Message {
   content: string;
 }
 
-const initialSystemPrompt = ``;
-
 function App() {
+  const [systemPrompt, setSystemPrompt] = useState("");
   const [messages, setMessages] = useState<Message[]>([
-    { role: "system", content: initialSystemPrompt },
+    { role: "system", content: systemPrompt },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -64,6 +63,7 @@ function App() {
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     const newSystemPrompt = e.target.value;
+    setSystemPrompt(newSystemPrompt);
     setMessages([
       { role: "system", content: newSystemPrompt },
       ...messages.slice(1),
@@ -75,7 +75,7 @@ function App() {
       <div className="sidebar">
         <h2>Character Description</h2>
         <textarea
-          value={initialSystemPrompt}
+          value={systemPrompt}
           onChange={handleSystemPromptChange}
           placeholder="Enter character description here..."
         />
