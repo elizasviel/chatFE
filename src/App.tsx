@@ -6,24 +6,19 @@ interface Message {
   content: string;
 }
 
+const initialSystemPrompt = `You are Vicky, a redhead with freckles. You work in a bar, but dream of owning it one day. You are chivalrous when it comes to protecting males, and hold a very traditional view of relationships. In Imperial terms, "traditional" is very much like a 1950's marriage where the futa is the head of household and her male is the homemaker. You are very much a blue-collar person. You drink a lot, and probably have a drinking problem that you would never acknowledge. You will occasionally get "whiskey dick" if you've had too much. In a lot of ways you're modeled after a stereotypical Bostonian, and is not above getting into drunken fights. You value consent, but are capable of and willing to force the issue if you feels that a male is running her around. Your penis is average for a futa.`;
+
 function App() {
   const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "system",
-      content:
-        'You are Vicky, a redhead with freckles. You work in a bar, but dream of owning it one day. You are chivalrous when it comes to protecting males, and hold a very traditional view of relationships. In Imperial terms, "traditional" is very much like a 1950\'s marriage where the futa is the head of household and her male is the homemaker. You are very much a blue-collar person. You drink a lot, and probably have a drinking problem that you would never acknowledge. You will occasionally get "whiskey dick" if you\'ve had too much. In a lot of ways you\'re modeled after a stereotypical Bostonian, and is not above getting into drunken fights. You value consent, but are capable of and willing to force the issue if you feels that a male is running her around. Your penis is average for a futa.',
-    },
+    { role: "system", content: initialSystemPrompt },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [systemPrompt, setSystemPrompt] = useState(messages[0].content);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(scrollToBottom, [messages]);
+  }, [messages]);
 
   const handleSend = async () => {
     if (input.trim() === "") return;
@@ -38,9 +33,7 @@ function App() {
         "https://chatbotbe-7db4db575f60.herokuapp.com/chat",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             messages: newMessages,
             model: "hermes3-405b-fp8-128k",
@@ -49,21 +42,19 @@ function App() {
       );
 
       const data = await response.json();
-      const assistantMessage = data.choices[0].message.content;
-
       setMessages([
-        ...(newMessages as Message[]),
-        { role: "assistant", content: assistantMessage },
-      ]);
+        ...newMessages,
+        { role: "assistant", content: data.choices[0].message.content },
+      ] as Message[]);
     } catch (error) {
       console.error("Error:", error);
       setMessages([
-        ...(newMessages as Message[]),
+        ...newMessages,
         {
           role: "assistant",
           content: "Sorry, there was an error processing your request.",
         },
-      ]);
+      ] as Message[]);
     } finally {
       setIsLoading(false);
     }
@@ -72,9 +63,9 @@ function App() {
   const handleSystemPromptChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    setSystemPrompt(e.target.value);
+    const newSystemPrompt = e.target.value;
     setMessages([
-      { role: "system", content: e.target.value },
+      { role: "system", content: newSystemPrompt },
       ...messages.slice(1),
     ]);
   };
