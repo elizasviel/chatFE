@@ -108,15 +108,41 @@ function App() {
   const handleAddToKnowledgeBase = async () => {
     if (!uploadedFile) return;
     setIsLoading(true);
-    await fetch("https://chatbotbe-7db4db575f60.herokuapp.com/chunk", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        document: uploadedFile,
-      }),
-    });
-    setIsLoading(false);
-    setUploadedFile(null);
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const fileContent = event.target?.result as string;
+
+      try {
+        const response = await fetch(
+          "https://chatbotbe-7db4db575f60.herokuapp.com/chunk",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              document: fileContent,
+              fileName: uploadedFile.name,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Chunking result:", data);
+        // Handle the chunking result as needed (e.g., update state, show a success message)
+      } catch (error) {
+        console.error("Error chunking document:", error);
+        // Handle the error (e.g., show an error message to the user)
+      } finally {
+        setIsLoading(false);
+        setUploadedFile(null);
+      }
+    };
+
+    reader.readAsText(uploadedFile);
   };
 
   const toggleRagMode = () => {
