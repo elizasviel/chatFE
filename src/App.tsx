@@ -188,7 +188,7 @@ function App() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               messages: newMessages,
-              model: "hermes3-405b",
+              model: "hermes3-405b-fp8-128k",
             }),
           }
         );
