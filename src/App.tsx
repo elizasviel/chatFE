@@ -65,6 +65,7 @@ function App() {
 
       console.log("Knowledge base cleared");
       setRetrievedChunks([]); // Clear the retrieved chunks
+      setUploadedFile(null); // Clear the uploaded file
     } catch (error) {
       console.error("Error clearing knowledge base:", error);
     } finally {
