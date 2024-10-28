@@ -165,6 +165,11 @@ function App() {
         );
 
         const data = await response.json();
+        // Update retrieved chunks with the chunks from the response
+        if (data.chunks) {
+          setRetrievedChunks(data.chunks);
+        }
+
         setMessages([
           ...newMessages,
           { role: "assistant", content: data.choices[0].message.content },
