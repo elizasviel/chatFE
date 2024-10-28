@@ -64,6 +64,7 @@ function App() {
       }
 
       console.log("Knowledge base cleared");
+      setRetrievedChunks([]); // Clear the retrieved chunks
     } catch (error) {
       console.error("Error clearing knowledge base:", error);
     } finally {
