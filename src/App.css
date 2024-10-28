@@ -97,8 +97,20 @@ body {
   background-color: #34495e;
   padding: 0.5rem;
   border-radius: 0.25rem;
-  opacity: 1;
-  transition: background-color 0.2s ease;
+  max-height: 200px; /* Set a fixed maximum height */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.chunk {
+  background-color: #2c3e50;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+  color: #ecf0f1;
+  word-wrap: break-word; /* Allow long words to break */
+  overflow-wrap: break-word; /* Modern browsers */
+  white-space: pre-wrap; /* Preserve whitespace and wrapping */
 }
 
 .retrieved-chunks.disabled {
