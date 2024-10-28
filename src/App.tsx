@@ -25,6 +25,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isChatEnabled, setIsChatEnabled] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -66,6 +67,9 @@ function App() {
       console.log("Knowledge base cleared");
       setRetrievedChunks([]); // Clear the retrieved chunks
       setUploadedFile(null); // Clear the uploaded file
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; // Reset the file input
+      }
     } catch (error) {
       console.error("Error clearing knowledge base:", error);
     } finally {
@@ -247,6 +251,7 @@ function App() {
               type="file"
               onChange={handleFileUpload}
               disabled={!ragMode}
+              ref={fileInputRef}
             />
             <button
               className={`toggle-rag-button ${ragMode ? "enabled" : ""}`}
