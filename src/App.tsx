@@ -165,7 +165,7 @@ function App() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               messages: newMessages,
-              model: "hermes3-405b-fp8-128k",
+              model: "hermes3-405b",
             }),
           }
         );
@@ -188,7 +188,7 @@ function App() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               messages: newMessages,
-              model: "hermes3-405b-fp8-128k",
+              model: "hermes3-405b",
             }),
           }
         );
